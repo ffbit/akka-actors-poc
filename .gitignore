@@ -15,3 +15,4 @@ solr/collection1/data/
 ${project.build.directory}
 *-pom.xml
 
+javadocs
