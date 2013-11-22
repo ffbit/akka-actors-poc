@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import com.google.common.base.Objects;
 
-//import com.wmg.dsp.streams.service.domain.activitystream.ActivityStreamGenerator;
+//import com.wmg.dsp.streams.service.domain.activitystream.Generator;
 
 public class Tile {
     private UUID id;
@@ -19,7 +19,7 @@ public class Tile {
 
     private Date updated;
 
-    private ActivityStreamGenerator generator;
+    private Generator generator;
 
     private Set<Participant> recipients = new HashSet<>();
 
@@ -45,11 +45,11 @@ public class Tile {
         this.recipients = recipients;
     }
 
-    public ActivityStreamGenerator getGenerator() {
+    public Generator getGenerator() {
         return generator;
     }
 
-    public void setGenerator(ActivityStreamGenerator generator) {
+    public void setGenerator(Generator generator) {
         this.generator = generator;
     }
 

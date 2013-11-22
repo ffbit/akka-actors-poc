@@ -7,9 +7,10 @@ import java.util.UUID;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import akka.lp.domain.ActivityStreamGenerator;
+import akka.lp.domain.EntityType;
+import akka.lp.domain.Generator;
 import akka.lp.domain.ActivityStreamMessage;
-import akka.lp.domain.ActivityStreamTarget;
+import akka.lp.domain.Participant;
 
 public class Main {
 
@@ -28,14 +29,14 @@ public class Main {
         return new ActivityStreamMessage(getGenerator(), getTargets());
     }
 
-    private static ActivityStreamGenerator getGenerator() {
-        return new ActivityStreamGenerator(UUID.randomUUID(), "http://apple.com", "Apple Inc");
+    private static Generator getGenerator() {
+        return new Generator(UUID.randomUUID(), "http://apple.com", "Apple Inc");
     }
 
-    private static Collection<ActivityStreamTarget> getTargets() {
+    private static Collection<Participant> getTargets() {
         return Arrays.asList(
-                new ActivityStreamTarget(UUID.randomUUID(), "user"),
-                new ActivityStreamTarget(UUID.randomUUID(), "user")
+                new Participant(UUID.randomUUID().toString(), EntityType.USER),
+                new Participant(UUID.randomUUID().toString(), EntityType.USER)
         );
     }
 

@@ -5,24 +5,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * Represents Activity Stream Message DTO that we receive from external world.
+ */
 public class ActivityStreamMessage implements Serializable {
     private static final long serialVersionUID = 3606159914038843207L;
 
-    private final ActivityStreamGenerator generator;
+    private final Generator generator;
 
-    private final Collection<ActivityStreamTarget> targets;
+    private final Collection<Participant> targets;
 
-    public ActivityStreamMessage(ActivityStreamGenerator generator,
-                                 Collection<ActivityStreamTarget> targets) {
+    public ActivityStreamMessage(Generator generator,
+                                 Collection<Participant> targets) {
         this.generator = generator;
         this.targets = Collections.unmodifiableCollection(new ArrayList(targets));
     }
 
-    public ActivityStreamGenerator getGenerator() {
+    public Generator getGenerator() {
         return generator;
     }
 
-    public Collection<ActivityStreamTarget> getTargets() {
+    public Collection<Participant> getTargets() {
         return targets;
     }
 

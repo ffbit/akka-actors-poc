@@ -13,7 +13,7 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.Function;
 import akka.japi.JavaPartialFunction;
-import akka.lp.domain.ActivityStreamGenerator;
+import akka.lp.domain.Generator;
 import akka.lp.domain.ActivityStreamMessage;
 import akka.lp.processors.NotifierActor;
 import akka.lp.processors.TileCreatorActor;
@@ -87,7 +87,7 @@ public class ActivityStreamProcessor extends UntypedActor {
 
         @Override
         public Object apply(Object msg, boolean isCheck) throws Exception {
-            if (msg instanceof ActivityStreamGenerator) {
+            if (msg instanceof Generator) {
 
             }
 

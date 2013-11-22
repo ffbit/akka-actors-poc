@@ -8,6 +8,11 @@ public class Participant {
     private String name;
     private EntityType type;
 
+    public Participant(String id, EntityType type) {
+        this.id = id;
+        this.type = type;
+    }
+
     public String getId() {
         return id;
     }
