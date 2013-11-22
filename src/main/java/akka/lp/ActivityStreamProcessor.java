@@ -3,6 +3,7 @@ package akka.lp;
 import static akka.actor.SupervisorStrategy.escalate;
 import static akka.actor.SupervisorStrategy.restart;
 import static akka.actor.SupervisorStrategy.resume;
+import static akka.actor.SupervisorStrategy.stop;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -76,18 +77,9 @@ public class ActivityStreamProcessor extends UntypedActor {
             log.info("Handling an Activity Stream message: {}", msg);
 
             streamMessage = (ActivityStreamMessage) msg;
-            context().become(expectReply, false);
-        } else if (msg instanceof Generator) {
-            log.info("Got a generator: {}", msg);
-
-            tileCreator.tell(streamMessage, self());
-        } else {
             titleScrapper.tell(streamMessage.getGenerator(), self());
-
-            trackCreator.tell(streamMessage, self());
-            notifier.tell(streamMessage.getTargets(), self());
-
-
+            context().become(expectReply, false);
+        } else {
             log.info("Could not handle the message: {}", msg);
             unhandled(msg);
         }
@@ -112,6 +104,8 @@ public class ActivityStreamProcessor extends UntypedActor {
             } else if (isCollectionOf(msg, Track.class)) {
                 log.info("Got created tracks: {}", msg);
                 notifier.tell(streamMessage.getTargets(), self());
+
+                stop();
             } else {
                 log.info("Could not handle the message: {}", msg);
                 unhandled(msg);
@@ -128,6 +122,7 @@ public class ActivityStreamProcessor extends UntypedActor {
         if (!(msg instanceof Collection && msg instanceof ParameterizedType)) {
             return false;
         }
+
 
         ParameterizedType pt = (ParameterizedType) msg;
         Type[] types = pt.getActualTypeArguments();

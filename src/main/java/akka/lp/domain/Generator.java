@@ -16,6 +16,10 @@ public class Generator implements Serializable {
         this(null, null, null);
     }
 
+    public Generator(Serializable id, String sourceUrl) {
+        this(id, sourceUrl, null);
+    }
+
     public Generator(Serializable id, String sourceUrl, String sourceUrlTitle) {
         this.id = id;
         this.sourceUrl = sourceUrl;

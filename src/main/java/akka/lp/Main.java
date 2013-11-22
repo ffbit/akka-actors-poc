@@ -30,7 +30,7 @@ public class Main {
     }
 
     private static Generator getGenerator() {
-        return new Generator(UUID.randomUUID(), "http://apple.com", "Apple Inc");
+        return new Generator(UUID.randomUUID(), "http://apple.com");
     }
 
     private static Collection<Participant> getTargets() {
