@@ -6,7 +6,7 @@ import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 
-public class TrackCreatorActor extends UntypedActor {
+public class NotifierProcessor extends UntypedActor {
     private final LoggingAdapter log = Logging.getLogger(context().system(), this);
 
     @Override

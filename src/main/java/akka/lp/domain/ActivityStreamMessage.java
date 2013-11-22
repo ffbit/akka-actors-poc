@@ -37,4 +37,8 @@ public class ActivityStreamMessage implements Serializable {
                 '}';
     }
 
+    public ActivityStreamMessage withGenerator(Generator generator) {
+        return new ActivityStreamMessage(generator, targets);
+    }
+
 }

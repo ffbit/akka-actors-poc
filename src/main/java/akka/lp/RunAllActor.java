@@ -13,9 +13,9 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.Function;
 import akka.lp.domain.ActivityStreamMessage;
-import akka.lp.processors.NotifierActor;
-import akka.lp.processors.TileCreatorActor;
-import akka.lp.processors.TrackCreatorActor;
+import akka.lp.processors.NotifierProcessor;
+import akka.lp.processors.TileCreatorProcessor;
+import akka.lp.processors.TrackCreatorProcessor;
 import scala.concurrent.duration.Duration;
 
 public class RunAllActor extends UntypedActor {
@@ -26,9 +26,9 @@ public class RunAllActor extends UntypedActor {
     private final ActorRef notifier;
 
     public RunAllActor() {
-        tileCreator = actorOf(TileCreatorActor.class);
-        trackCreator = actorOf(TrackCreatorActor.class);
-        notifier = actorOf(NotifierActor.class);
+        tileCreator = actorOf(TileCreatorProcessor.class);
+        trackCreator = actorOf(TrackCreatorProcessor.class);
+        notifier = actorOf(NotifierProcessor.class);
     }
 
     @Override

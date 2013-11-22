@@ -6,7 +6,7 @@ import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 
-public class TileCreatorActor extends UntypedActor {
+public class TitleScrapperProcessor extends UntypedActor {
     private final LoggingAdapter log = Logging.getLogger(context().system(), this);
 
     @Override
@@ -15,7 +15,7 @@ public class TileCreatorActor extends UntypedActor {
 
         TimeUnit.MILLISECONDS.sleep(10);
 
-        getSender().tell(msg, self());
+        sender().tell(msg, getSender());
     }
 
 }
