@@ -1,7 +1,6 @@
 package akka.lp.processor;
 
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -18,6 +17,8 @@ public class TileRouterProcessor extends UntypedActor {
     private final LoggingAdapter log = Logging.getLogger(context().system(), this);
 
     private ActorRef trackCreator;
+    private ActorRef parent;
+
     private Tile tile;
 
     @Override
@@ -36,6 +37,9 @@ public class TileRouterProcessor extends UntypedActor {
             trackCreator.tell(tile, self());
 
             context().become(expectTracks, false);
+
+            // TODO: get rid of this work around
+            parent = getSender();
         } else {
             unhandled(msg);
         }
@@ -51,7 +55,7 @@ public class TileRouterProcessor extends UntypedActor {
 
                 routeTile((Collection<Track>) msg);
 
-                context().parent().tell(tile, self());
+                parent.tell(tile, self());
             } else {
                 unhandled(msg);
             }

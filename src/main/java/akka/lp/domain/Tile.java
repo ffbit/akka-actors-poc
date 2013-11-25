@@ -30,6 +30,10 @@ public class Tile implements Serializable {
 
     private List<Comment> comments;
 
+    public Tile() {
+        id = UUID.randomUUID();
+    }
+
     public Set<Participant> getTags() {
         return tags;
     }
