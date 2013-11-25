@@ -26,14 +26,14 @@ public class Main {
     }
 
     private static ActivityStreamMessage getMessage() {
-        return new ActivityStreamMessage(getGenerator(), getTargets());
+        return new ActivityStreamMessage(getGenerator(), getParticipants());
     }
 
     private static Generator getGenerator() {
         return new Generator(UUID.randomUUID(), "http://apple.com");
     }
 
-    private static Collection<Participant> getTargets() {
+    private static Collection<Participant> getParticipants() {
         return Arrays.asList(
                 new Participant(UUID.randomUUID().toString(), EntityType.USER),
                 new Participant(UUID.randomUUID().toString(), EntityType.USER)

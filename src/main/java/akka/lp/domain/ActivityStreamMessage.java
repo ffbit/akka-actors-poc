@@ -13,32 +13,32 @@ public class ActivityStreamMessage implements Serializable {
 
     private final Generator generator;
 
-    private final Collection<Participant> targets;
+    private final Collection<Participant> participants;
 
     public ActivityStreamMessage(Generator generator,
-                                 Collection<Participant> targets) {
+                                 Collection<Participant> participants) {
         this.generator = generator;
-        this.targets = Collections.unmodifiableCollection(new ArrayList(targets));
+        this.participants = Collections.unmodifiableCollection(new ArrayList(participants));
     }
 
     public Generator getGenerator() {
         return generator;
     }
 
-    public Collection<Participant> getTargets() {
-        return targets;
+    public Collection<Participant> getParticipants() {
+        return participants;
     }
 
     @Override
     public String toString() {
         return "ActivityStreamMessage{" +
                 "generator=" + generator +
-                ", targets=" + targets +
+                ", participants=" + participants +
                 '}';
     }
 
     public ActivityStreamMessage withGenerator(Generator generator) {
-        return new ActivityStreamMessage(generator, targets);
+        return new ActivityStreamMessage(generator, participants);
     }
 
 }

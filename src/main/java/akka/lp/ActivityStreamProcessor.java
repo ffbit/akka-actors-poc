@@ -3,11 +3,6 @@ package akka.lp;
 import static akka.actor.SupervisorStrategy.escalate;
 import static akka.actor.SupervisorStrategy.restart;
 import static akka.actor.SupervisorStrategy.resume;
-import static akka.actor.SupervisorStrategy.stop;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
 
 import akka.actor.ActorRef;
 import akka.actor.OneForOneStrategy;
@@ -38,9 +33,6 @@ public class ActivityStreamProcessor extends UntypedActor {
     private ActorRef titleScrapper;
 
     private ActivityStreamMessage streamMessage;
-    private boolean generatorProcced;
-    private boolean tileProcessed;
-    private boolean tracksProcessed;
 
     @Override
     public SupervisorStrategy supervisorStrategy() {
@@ -78,9 +70,9 @@ public class ActivityStreamProcessor extends UntypedActor {
 
             streamMessage = (ActivityStreamMessage) msg;
             titleScrapper.tell(streamMessage.getGenerator(), self());
+
             context().become(expectReply, false);
         } else {
-            log.info("Could not handle the message: {}", msg);
             unhandled(msg);
         }
     }
@@ -100,42 +92,32 @@ public class ActivityStreamProcessor extends UntypedActor {
                 tileCreator.tell(streamMessage.withGenerator(generator), self());
             } else if (msg instanceof Tile) {
                 log.info("Got a created tile: {}", msg);
-                trackCreator.tell(msg, self());
-            } else if (isCollectionOf(msg, Track.class)) {
-                log.info("Got created tracks: {}", msg);
-                notifier.tell(streamMessage.getTargets(), self());
 
-                stop();
+                trackCreator.tell(msg, self());
+            } else if (Utils.isCollectionOf(msg, Track.class)) {
+                log.info("Got created tracks: {}", msg);
+
+                notifier.tell(streamMessage.getParticipants(), self());
+
+                unbecome();
             } else {
-                log.info("Could not handle the message: {}", msg);
                 unhandled(msg);
             }
 
-//            log.info("Unbecome");
-//            context().unbecome();
-
+            // TODO: Find what should be returned
             return null;
         }
     };
 
-    private boolean isCollectionOf(Object msg, Class<?> clazz) {
-        if (!(msg instanceof Collection && msg instanceof ParameterizedType)) {
-            return false;
-        }
+    @Override
+    public void unhandled(Object message) {
+        log.info("Could not handle the message: {}", message);
+        super.unhandled(message);
+    }
 
-
-        ParameterizedType pt = (ParameterizedType) msg;
-        Type[] types = pt.getActualTypeArguments();
-
-        if (types.length == 0) {
-            return false;
-        }
-
-        if (clazz.isAssignableFrom(msg.getClass())) {
-            return true;
-        }
-
-        return false;
+    private void unbecome() {
+        log.info("Unbecome");
+        context().unbecome();
     }
 
 }

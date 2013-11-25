@@ -1,6 +1,6 @@
 package akka.lp.processors;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -23,7 +23,7 @@ public class TileCreatorProcessor extends UntypedActor {
 
             TimeUnit.MILLISECONDS.sleep(10);
 
-            List<Track> tracks = new ArrayList();
+            List<Track> tracks = Arrays.asList(new Track(), new Track());
             getSender().tell(tracks, self());
         } else {
             log.info("Could not handle the message: {}", msg);
