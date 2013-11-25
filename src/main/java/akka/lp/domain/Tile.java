@@ -1,5 +1,6 @@
 package akka.lp.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +11,7 @@ import com.google.common.base.Objects;
 
 //import com.wmg.dsp.streams.service.domain.activitystream.Generator;
 
-public class Tile {
+public class Tile implements Serializable {
     private UUID id;
 
     private Participant poster;

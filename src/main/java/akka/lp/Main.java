@@ -15,6 +15,10 @@ import akka.lp.domain.Participant;
 public class Main {
 
     public static void main(String... args) {
+        sendMessage();
+    }
+
+    private static void sendMessage() {
         ActorRef actor = getActorRef(ActivityStreamProcessor.class, "activityStreamProcessor");
         actor.tell(getMessage(), ActorRef.noSender());
     }

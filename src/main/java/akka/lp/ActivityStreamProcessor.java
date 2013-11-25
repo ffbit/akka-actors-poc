@@ -17,10 +17,11 @@ import akka.lp.domain.ActivityStreamMessage;
 import akka.lp.domain.Generator;
 import akka.lp.domain.Tile;
 import akka.lp.domain.Track;
-import akka.lp.processors.NotifierProcessor;
-import akka.lp.processors.TileCreatorProcessor;
-import akka.lp.processors.TitleScrapperProcessor;
-import akka.lp.processors.TrackCreatorProcessor;
+import akka.lp.processor.NotifierProcessor;
+import akka.lp.processor.TileCreatorProcessor;
+import akka.lp.processor.TileRouterProcessor;
+import akka.lp.processor.TitleScrapperProcessor;
+import akka.lp.processor.TrackCreatorProcessor;
 import scala.PartialFunction;
 import scala.concurrent.duration.Duration;
 
@@ -29,10 +30,12 @@ public class ActivityStreamProcessor extends UntypedActor {
 
     private ActorRef tileCreator;
     private ActorRef trackCreator;
+    private ActorRef tileRouter;
     private ActorRef notifier;
     private ActorRef titleScrapper;
 
     private ActivityStreamMessage streamMessage;
+    private Tile tile;
 
     @Override
     public SupervisorStrategy supervisorStrategy() {
@@ -54,7 +57,7 @@ public class ActivityStreamProcessor extends UntypedActor {
     @Override
     public void preStart() throws Exception {
         tileCreator = actorOf(TileCreatorProcessor.class, "tileCreator");
-        trackCreator = actorOf(TrackCreatorProcessor.class, "trackCreator");
+        tileRouter = actorOf(TileRouterProcessor.class, "tileRouter");
         notifier = actorOf(NotifierProcessor.class, "notifier");
         titleScrapper = actorOf(TitleScrapperProcessor.class, "titleScrapper");
 
@@ -71,7 +74,7 @@ public class ActivityStreamProcessor extends UntypedActor {
             streamMessage = (ActivityStreamMessage) msg;
             titleScrapper.tell(streamMessage.getGenerator(), self());
 
-            context().become(expectReply, false);
+            become(expectGenerator);
         } else {
             unhandled(msg);
         }
@@ -81,25 +84,18 @@ public class ActivityStreamProcessor extends UntypedActor {
         return context().system().actorOf(Props.create(actorClass), name);
     }
 
-    private PartialFunction expectReply = new JavaPartialFunction() {
+    private PartialFunction expectGenerator = new JavaPartialFunction() {
         private final LoggingAdapter log = Logging.getLogger(context().system(), this);
 
         @Override
         public Object apply(Object msg, boolean isCheck) throws Exception {
             if (msg instanceof Generator) {
                 Generator generator = (Generator) msg;
+                streamMessage = streamMessage.withGenerator(generator);
 
-                tileCreator.tell(streamMessage.withGenerator(generator), self());
-            } else if (msg instanceof Tile) {
-                log.info("Got a created tile: {}", msg);
+                tileCreator.tell(streamMessage, self());
 
-                trackCreator.tell(msg, self());
-            } else if (Utils.isCollectionOf(msg, Track.class)) {
-                log.info("Got created tracks: {}", msg);
-
-                notifier.tell(streamMessage.getParticipants(), self());
-
-                unbecome();
+                become(expectRoutedTile);
             } else {
                 unhandled(msg);
             }
@@ -107,12 +103,89 @@ public class ActivityStreamProcessor extends UntypedActor {
             // TODO: Find what should be returned
             return null;
         }
+
+    };
+
+    private PartialFunction expectTile = new JavaPartialFunction() {
+        private final LoggingAdapter log = Logging.getLogger(context().system(), this);
+
+        @Override
+        public Object apply(Object msg, boolean isCheck) throws Exception {
+            if (msg instanceof Tile) {
+                log.info("Got a created tile: {}", msg);
+                tile = (Tile) msg;
+
+                notifier.tell(streamMessage.getParticipants(), self());
+
+                become(expectRoutedTile);
+            } else {
+                unhandled(msg);
+            }
+
+
+
+             /*else if (Utils.isCollectionOf(msg, Track.class)) {
+                log.info("Got created tracks: {}", msg);
+
+                notifier.tell(streamMessage.getParticipants(), self());
+
+                unbecome();
+            } else {
+                unhandled(msg);
+            }*/
+
+            // TODO: Find what should be returned
+            return null;
+        }
+    };
+
+
+//    private PartialFunction expectTracks = new JavaPartialFunction() {
+//        private final LoggingAdapter log = Logging.getLogger(context().system(), this);
+//
+//        @Override
+//        public Object apply(Object msg, boolean isCheck) throws Exception {
+//            if (Utils.isCollectionOf(msg, Track.class)) {
+//                log.info("Got created tracks: {}", msg);
+//
+//                notifier.tell(streamMessage.getParticipants(), self());
+//            } else {
+//                unhandled(msg);
+//            }
+//
+//            // TODO: Find what should be returned
+//            return null;
+//        }
+//
+//    };
+
+    private PartialFunction expectRoutedTile = new JavaPartialFunction() {
+        private final LoggingAdapter log = Logging.getLogger(context().system(), this);
+
+        @Override
+        public Object apply(Object msg, boolean isCheck) throws Exception {
+            if (msg instanceof Tile) {
+                log.info("Got routed tile: {}", msg);
+
+                notifier.tell(streamMessage.getParticipants(), self());
+            } else {
+                unhandled(msg);
+            }
+
+            // TODO: Find what should be returned
+            return null;
+        }
+
     };
 
     @Override
     public void unhandled(Object message) {
         log.info("Could not handle the message: {}", message);
         super.unhandled(message);
+    }
+
+    private void become(PartialFunction expect) {
+        context().become(expect, false);
     }
 
     private void unbecome() {

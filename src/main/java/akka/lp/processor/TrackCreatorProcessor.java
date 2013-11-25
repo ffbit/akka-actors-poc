@@ -1,4 +1,4 @@
-package akka.lp.processors;
+package akka.lp.processor;
 
 import java.util.concurrent.TimeUnit;
 
@@ -6,7 +6,7 @@ import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 
-public class TileRouterProcessor extends UntypedActor {
+public class TrackCreatorProcessor extends UntypedActor {
     private final LoggingAdapter log = Logging.getLogger(context().system(), this);
 
     @Override

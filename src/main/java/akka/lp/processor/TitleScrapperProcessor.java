@@ -1,4 +1,4 @@
-package akka.lp.processors;
+package akka.lp.processor;
 
 import java.util.concurrent.TimeUnit;
 

@@ -1,4 +1,4 @@
-package akka.lp.processors;
+package akka.lp.processor;
 
 import java.util.Collection;
 
@@ -13,13 +13,13 @@ public class NotifierProcessor extends UntypedActor {
 
     @Override
     public void onReceive(Object msg) throws Exception {
-        log.info("Got participants to be notified: {}", msg);
-
         if (!Utils.isCollectionOf(msg, Participant.class)) {
             unhandled(msg);
 
             return;
         }
+
+        log.info("Got participants to be notified: {}", msg);
 
         Collection<Participant> participants = (Collection<Participant>) msg;
 
