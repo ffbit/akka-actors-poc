@@ -15,7 +15,7 @@ public class TrackCreatorProcessor extends UntypedActor {
 
     @Override
     public void onReceive(Object msg) throws Exception {
-        log.info("Got message {}", msg);
+        log.info("\nGot message {}", msg);
 
         if (msg instanceof Tile) {
             Collection<Track> tracks = createTracks((Tile) msg);
@@ -27,11 +27,11 @@ public class TrackCreatorProcessor extends UntypedActor {
     }
 
     private Collection<Track> createTracks(Tile tile) {
-        log.info("About to execute Tracks business logic");
+        log.info("\nAbout to execute Tracks business logic");
 
         Collection<Track> tracks = Arrays.asList(createTrack(), createTrack());
 
-        log.info("Tracks business logic has been executed");
+        log.info("\nTracks business logic has been executed");
 
         return tracks;
     }

@@ -39,14 +39,14 @@ public class TileCreatorProcessor extends UntypedActor {
         log.info("{}", msg);
 
         if (msg instanceof ActivityStreamMessage) {
-            log.info("Got AS message to create a tile: {}", msg);
+            log.info("\nGot AS message to create a tile: {}", msg);
 
             Tile tile = createTile((ActivityStreamMessage) msg);
             tile = persistTile(tile);
 
             getSender().tell(tile, getSender());
         } else {
-            log.info("Could not handle the message: {}", msg);
+            log.info("\nCould not handle the message: {}", msg);
 
             unhandled(msg);
         }
@@ -55,18 +55,18 @@ public class TileCreatorProcessor extends UntypedActor {
     }
 
     private Tile createTile(ActivityStreamMessage msg) {
-        log.info("About to create a tile from AS message: {}", msg);
+        log.info("\nAbout to create a tile from AS message: {}", msg);
 
         Utils.sleep();
         Tile tile = new Tile();
 
-        log.info("A new tile has been created: {}", tile);
+        log.info("\nA new tile has been created: {}", tile);
 
         return tile;
     }
 
     private Tile persistTile(final Tile tile) throws Exception {
-        log.info("About to persist the created tile: {}", tile);
+        log.info("\nAbout to persist the created tile: {}", tile);
 
         // TODO: this is a synchronous block
         Timeout timeout = new Timeout(Duration.create(5, TimeUnit.SECONDS));
@@ -75,7 +75,7 @@ public class TileCreatorProcessor extends UntypedActor {
         Tile persisted = (Tile) Await.result(future, timeout.duration());
         // TODO: synchronous block end
 
-        log.info("The tile has been persisted: {}", persisted);
+        log.info("\nThe tile has been persisted: {}", persisted);
 
         return persisted;
     }

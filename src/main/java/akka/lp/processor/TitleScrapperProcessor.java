@@ -12,7 +12,7 @@ public class TitleScrapperProcessor extends UntypedActor {
 
     @Override
     public void onReceive(Object msg) throws Exception {
-        log.info("Got a message: {}", msg);
+        log.info("\nGot a message: {}", msg);
 
         if (msg instanceof Generator) {
             Generator in = (Generator) msg;
@@ -22,7 +22,7 @@ public class TitleScrapperProcessor extends UntypedActor {
 
             getSender().tell(out, self());
         } else {
-            log.info("Could not handle the message: {}", msg);
+            log.info("\nCould not handle the message: {}", msg);
 
             unhandled(msg);
         }

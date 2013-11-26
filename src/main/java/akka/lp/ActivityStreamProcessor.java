@@ -66,7 +66,7 @@ public class ActivityStreamProcessor extends UntypedActor {
         log.info("Got a message: {}", msg);
 
         if (msg instanceof ActivityStreamMessage) {
-            log.info("Handling an Activity Stream message: {}", msg);
+            log.info("\nHandling an Activity Stream message: {}", msg);
 
             streamMessage = (ActivityStreamMessage) msg;
             titleScrapper.tell(streamMessage.getGenerator(), self());
@@ -112,7 +112,7 @@ public class ActivityStreamProcessor extends UntypedActor {
             @Override
             public Object apply(Object msg, boolean isCheck) throws Exception {
                 if (msg instanceof Tile) {
-                    log.info("Got a created tile: {}", msg);
+                    log.info("\nGot a created tile: {}", msg);
                     tile = (Tile) msg;
 
                     tileRouter.tell(tile, self());
@@ -135,9 +135,29 @@ public class ActivityStreamProcessor extends UntypedActor {
             @Override
             public Object apply(Object msg, boolean isCheck) throws Exception {
                 if (msg instanceof Tile) {
-                    log.info("Got routed tile: {}", msg);
+                    log.info("\nGot routed tile: {}", msg);
 
                     notifier.tell(streamMessage.getParticipants(), self());
+                    become(expectDone());
+                } else {
+                    unhandled(msg);
+                }
+
+                // TODO: Find what should be returned
+                return null;
+            }
+
+        };
+    }
+
+    private PartialFunction expectDone() {
+        return new JavaPartialFunction() {
+            private final LoggingAdapter log = Logging.getLogger(context().system(), this);
+
+            @Override
+            public Object apply(Object msg, boolean isCheck) throws Exception {
+                if ("done".equals(msg)) {
+                    log.info("\nGot the `done` status: {}", msg);
                 } else {
                     unhandled(msg);
                 }
@@ -151,7 +171,7 @@ public class ActivityStreamProcessor extends UntypedActor {
 
     @Override
     public void unhandled(Object message) {
-        log.info("Could not handle the message: {}", message);
+        log.info("\nCould not handle the message: {}", message);
         super.unhandled(message);
     }
 

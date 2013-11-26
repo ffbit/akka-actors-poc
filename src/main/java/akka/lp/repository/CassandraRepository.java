@@ -14,7 +14,7 @@ public class CassandraRepository extends UntypedActor {
 
     @Override
     public void onReceive(Object msg) throws Exception {
-        log.info("Got message: {}", msg);
+        log.info("\nGot message: {}", msg);
 
         if (msg instanceof Serializable) {
             Serializable entity = (Serializable) msg;
@@ -26,12 +26,12 @@ public class CassandraRepository extends UntypedActor {
 
     private <T extends Serializable> T save(T t) {
         if (isItTimeForException()) {
-            log.error("About to throw an exception");
+            log.error("\nAbout to throw an exception");
 
-            throw new TilePersistentException("Ta-da! Could not persist a tile: " + t);
+            throw new TilePersistentException("\nTa-da! Could not persist a tile: " + t);
         }
 
-        log.info("A new {} has been persisted: {}", t.getClass(), t);
+        log.info("\nA new {} has been persisted: {}", t.getClass(), t);
 
         return t;
     }
