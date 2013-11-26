@@ -36,7 +36,7 @@ public class TileRouterProcessor extends UntypedActor {
 
             trackCreator.tell(tile, self());
 
-            context().become(expectTracks, false);
+            context().become(expectTracks(), false);
 
             // TODO: get rid of this work around
             parent = getSender();
@@ -45,26 +45,28 @@ public class TileRouterProcessor extends UntypedActor {
         }
     }
 
-    private PartialFunction expectTracks = new JavaPartialFunction() {
-        private final LoggingAdapter log = Logging.getLogger(context().system(), this);
+    private PartialFunction expectTracks() {
+        return new JavaPartialFunction() {
+            private final LoggingAdapter log = Logging.getLogger(context().system(), this);
 
-        @Override
-        public Object apply(Object msg, boolean isCheck) throws Exception {
-            if (Utils.isCollectionOf(msg, Track.class)) {
-                log.info("Got created tracks: {}", msg);
+            @Override
+            public Object apply(Object msg, boolean isCheck) throws Exception {
+                if (Utils.isCollectionOf(msg, Track.class)) {
+                    log.info("Got created tracks: {}", msg);
 
-                routeTile((Collection<Track>) msg);
+                    routeTile((Collection<Track>) msg);
 
-                parent.tell(tile, self());
-            } else {
-                unhandled(msg);
+                    parent.tell(tile, self());
+                } else {
+                    unhandled(msg);
+                }
+
+                // TODO: Find what should be returned
+                return null;
             }
 
-            // TODO: Find what should be returned
-            return null;
-        }
-
-    };
+        };
+    }
 
     private void routeTile(Collection<Track> tracks) {
         for (Track e : tracks) {

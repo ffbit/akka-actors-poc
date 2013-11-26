@@ -71,7 +71,7 @@ public class ActivityStreamProcessor extends UntypedActor {
             streamMessage = (ActivityStreamMessage) msg;
             titleScrapper.tell(streamMessage.getGenerator(), self());
 
-            become(expectGenerator);
+            become(expectGenerator());
         } else {
             unhandled(msg);
         }
@@ -81,67 +81,73 @@ public class ActivityStreamProcessor extends UntypedActor {
         return context().system().actorOf(Props.create(actorClass), name);
     }
 
-    private PartialFunction expectGenerator = new JavaPartialFunction() {
-        private final LoggingAdapter log = Logging.getLogger(context().system(), this);
+    private PartialFunction expectGenerator() {
+        return new JavaPartialFunction() {
+            private final LoggingAdapter log = Logging.getLogger(context().system(), this);
 
-        @Override
-        public Object apply(Object msg, boolean isCheck) throws Exception {
-            if (msg instanceof Generator) {
-                Generator generator = (Generator) msg;
-                streamMessage = streamMessage.withGenerator(generator);
+            @Override
+            public Object apply(Object msg, boolean isCheck) throws Exception {
+                if (msg instanceof Generator) {
+                    Generator generator = (Generator) msg;
+                    streamMessage = streamMessage.withGenerator(generator);
 
-                tileCreator.tell(streamMessage, self());
+                    tileCreator.tell(streamMessage, self());
 
-                become(expectPersistedTile);
-            } else {
-                unhandled(msg);
+                    become(expectPersistedTile());
+                } else {
+                    unhandled(msg);
+                }
+
+                // TODO: Find what should be returned
+                return null;
             }
 
-            // TODO: Find what should be returned
-            return null;
-        }
+        };
+    }
 
-    };
+    private PartialFunction expectPersistedTile() {
+        return new JavaPartialFunction() {
+            private final LoggingAdapter log = Logging.getLogger(context().system(), this);
 
-    private PartialFunction expectPersistedTile = new JavaPartialFunction() {
-        private final LoggingAdapter log = Logging.getLogger(context().system(), this);
+            @Override
+            public Object apply(Object msg, boolean isCheck) throws Exception {
+                if (msg instanceof Tile) {
+                    log.info("Got a created tile: {}", msg);
+                    tile = (Tile) msg;
 
-        @Override
-        public Object apply(Object msg, boolean isCheck) throws Exception {
-            if (msg instanceof Tile) {
-                log.info("Got a created tile: {}", msg);
-                tile = (Tile) msg;
+                    tileRouter.tell(tile, self());
 
-                tileRouter.tell(tile, self());
+                    become(expectRoutedTile());
+                } else {
+                    unhandled(msg);
+                }
 
-                become(expectRoutedTile);
-            } else {
-                unhandled(msg);
+                // TODO: Find what should be returned
+                return null;
+            }
+        };
+    }
+
+    private PartialFunction expectRoutedTile() {
+        return new JavaPartialFunction() {
+            private final LoggingAdapter log = Logging.getLogger(context().system(), this);
+
+            @Override
+            public Object apply(Object msg, boolean isCheck) throws Exception {
+                if (msg instanceof Tile) {
+                    log.info("Got routed tile: {}", msg);
+
+                    notifier.tell(streamMessage.getParticipants(), self());
+                } else {
+                    unhandled(msg);
+                }
+
+                // TODO: Find what should be returned
+                return null;
             }
 
-            // TODO: Find what should be returned
-            return null;
-        }
-    };
-
-    private PartialFunction expectRoutedTile = new JavaPartialFunction() {
-        private final LoggingAdapter log = Logging.getLogger(context().system(), this);
-
-        @Override
-        public Object apply(Object msg, boolean isCheck) throws Exception {
-            if (msg instanceof Tile) {
-                log.info("Got routed tile: {}", msg);
-
-                notifier.tell(streamMessage.getParticipants(), self());
-            } else {
-                unhandled(msg);
-            }
-
-            // TODO: Find what should be returned
-            return null;
-        }
-
-    };
+        };
+    }
 
     @Override
     public void unhandled(Object message) {
