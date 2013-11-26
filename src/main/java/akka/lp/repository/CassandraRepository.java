@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import akka.lp.processor.exception.TilePersistentException;
+import akka.lp.processor.exception.PersistentException;
 
 public class CassandraRepository extends UntypedActor {
     private final static AtomicInteger counter = new AtomicInteger();
@@ -28,7 +28,7 @@ public class CassandraRepository extends UntypedActor {
         if (isItTimeForException()) {
             log.error("\nAbout to throw an exception");
 
-            throw new TilePersistentException("\nTa-da! Could not persist a tile: " + t);
+            throw new PersistentException("\nTa-da! Could not persist a tile: " + t);
         }
 
         log.info("\nA new {} has been persisted: {}", t.getClass(), t);

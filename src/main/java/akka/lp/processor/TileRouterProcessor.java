@@ -29,7 +29,7 @@ public class TileRouterProcessor extends UntypedActor {
 
     @Override
     public void onReceive(Object msg) throws Exception {
-        log.info("{}", msg);
+        log.info("\nGot a message:{}", msg);
 
         if (msg instanceof Tile) {
             tile = (Tile) msg;
@@ -52,7 +52,7 @@ public class TileRouterProcessor extends UntypedActor {
             @Override
             public Object apply(Object msg, boolean isCheck) throws Exception {
                 if (Utils.isCollectionOf(msg, Track.class)) {
-                    log.info("Got created tracks: {}", msg);
+                    log.info("\nGot created tracks: {}", msg);
 
                     routeTile((Collection<Track>) msg);
 
@@ -70,7 +70,7 @@ public class TileRouterProcessor extends UntypedActor {
 
     private void routeTile(Collection<Track> tracks) {
         for (Track e : tracks) {
-            log.info("Tile {} has been routed to track {}", tile.getId(), e.getOwnerId());
+            log.info("\nTile {} has been routed to track {}", tile.getId(), e.getOwnerId());
         }
     }
 

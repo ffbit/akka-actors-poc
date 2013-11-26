@@ -16,9 +16,10 @@ class Supervisor extends UntypedActor {
 
     private SupervisorStrategy strategy = new OneForOneStrategy(
             10, Duration.apply("1 minute"), new Function<Throwable, SupervisorStrategy.Directive>() {
+
         @Override
         public SupervisorStrategy.Directive apply(Throwable t) {
-            if (t instanceof ArithmeticException) {
+            if (t instanceof WorkerException) {
                 return resume();
             } else if (t instanceof NullPointerException) {
                 return restart();
@@ -26,6 +27,7 @@ class Supervisor extends UntypedActor {
                 return escalate();
             }
         }
+
     });
 
     @Override

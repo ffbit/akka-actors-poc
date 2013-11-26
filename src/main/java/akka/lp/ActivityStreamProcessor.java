@@ -20,6 +20,7 @@ import akka.lp.processor.NotifierProcessor;
 import akka.lp.processor.TileCreatorProcessor;
 import akka.lp.processor.TileRouterProcessor;
 import akka.lp.processor.TitleScrapperProcessor;
+import akka.lp.processor.exception.PersistentException;
 import scala.PartialFunction;
 import scala.concurrent.duration.Duration;
 
@@ -40,7 +41,7 @@ public class ActivityStreamProcessor extends UntypedActor {
                 10, Duration.apply("1 minute"), new Function<Throwable, SupervisorStrategy.Directive>() {
             @Override
             public SupervisorStrategy.Directive apply(Throwable t) {
-                if (t instanceof ArithmeticException) {
+                if (t instanceof PersistentException) {
                     return resume();
                 } else if (t instanceof NullPointerException) {
                     return restart();

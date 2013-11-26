@@ -1,8 +1,5 @@
 package akka.lp.processor;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
@@ -18,9 +15,9 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
-public class TileCreatorProcessor extends UntypedActor {
-    private final static AtomicInteger counter = new AtomicInteger();
+import java.util.concurrent.TimeUnit;
 
+public class TileCreatorProcessor extends UntypedActor {
     private final LoggingAdapter log = Logging.getLogger(context().system(), this);
 
     private ActorRef repository;
