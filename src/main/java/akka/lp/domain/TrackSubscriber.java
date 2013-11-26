@@ -43,7 +43,7 @@ public class TrackSubscriber {
 
         TrackSubscriber that = (TrackSubscriber) o;
         return Objects.equal(trackId, that.trackId) &&
-               Objects.equal(subscriberId, that.subscriberId);
+                Objects.equal(subscriberId, that.subscriberId);
     }
 
     @Override

@@ -39,6 +39,38 @@ public class Generator implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Generator generator = (Generator) o;
+
+        if (id != null ? !id.equals(generator.id) : generator.id != null) {
+            return false;
+        }
+        if (sourceUrl != null ? !sourceUrl.equals(generator.sourceUrl) : generator.sourceUrl != null) {
+            return false;
+        }
+        if (sourceUrlTitle != null ? !sourceUrlTitle.equals(generator.sourceUrlTitle) : generator.sourceUrlTitle != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (sourceUrl != null ? sourceUrl.hashCode() : 0);
+        result = 31 * result + (sourceUrlTitle != null ? sourceUrlTitle.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Generator{" +
                 "id=" + id +

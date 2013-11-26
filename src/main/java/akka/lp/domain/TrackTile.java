@@ -53,7 +53,7 @@ public class TrackTile {
 
         TrackTile that = (TrackTile) o;
         return Objects.equal(trackId, that.trackId) &&
-               Objects.equal(tileId, that.tileId);
+                Objects.equal(tileId, that.tileId);
     }
 
     @Override
