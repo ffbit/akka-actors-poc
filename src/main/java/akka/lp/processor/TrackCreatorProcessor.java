@@ -20,7 +20,7 @@ public class TrackCreatorProcessor extends UntypedActor {
         if (msg instanceof Tile) {
             Collection<Track> tracks = createTracks((Tile) msg);
 
-            sender().tell(tracks, self());
+            getSender().tell(tracks, getSelf());
         } else {
             unhandled(msg);
         }
