@@ -2,4 +2,4 @@ Main class lays [here](https://github.com/ffbit/akka-actors-poc/blob/master/src/
 
 How to run
 
-`mvn exec:java`
+`mvn compile exec:java`
