@@ -13,16 +13,17 @@ public class NotifierProcessor extends UntypedActor {
 
     @Override
     public void onReceive(Object msg) throws Exception {
-        if (!Utils.isCollectionOf(msg, Participant.class)) {
+        if (Utils.isCollectionOf(msg, Participant.class)) {
+            log.info("Got participants to be notified: {}", msg);
+
+            notify((Collection<Participant>) msg);
+            sender().tell("done", self());
+        } else {
             unhandled(msg);
-
-            return;
         }
+    }
 
-        log.info("Got participants to be notified: {}", msg);
-
-        Collection<Participant> participants = (Collection<Participant>) msg;
-
+    private void notify(Collection<Participant> participants) {
         for (Participant p : participants) {
             log.info("About to notify a participant: {}", p.getId());
             Utils.sleep();
